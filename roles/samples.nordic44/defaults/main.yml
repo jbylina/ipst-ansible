@@ -7,6 +7,6 @@ nordic44_downloads: "{{ ipst_install_path | default( ansible_env.HOME) }}/sample
 nordic44_caserepo: "{{ ipst_install_path | default( ansible_env.HOME) }}/samples/Nordic44/caserepo"
 # these parameters set how many weeks to download
 nordic44_startweek: 1
-nordic44_noweeks: 2
+nordic44_noweeks: 53
 
 
