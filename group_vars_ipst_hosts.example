@@ -186,8 +186,8 @@ user_ddb_eurostag_version: "5.1.1"
 user_hades_process: False
 
 ## hades_archive_name - hades binary archive name
-##    (default value is hades2LF.zip)
-user_hades_archive_name: hades2LF.zip
+##    (default value is hades2LF.tar.gz)
+user_hades_archive_name: hades2LF.tar.gz
 
 ## hades_src - local hades binary path archive
 ##    (default value is ~/tmp/hades)

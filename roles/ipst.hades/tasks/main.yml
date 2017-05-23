@@ -83,6 +83,7 @@
   become: false
   template: src=itesla_config.xml.j2
             dest="{{ ansible_env.HOME }}/.itesla/config.xml"
+            force=no
 
 #
 - name: create directory
@@ -95,6 +96,7 @@
         dest={{ hades_situations_dst }}
 #  with_fileglob:
 #    - "{{ hades_situations_src }}"
+  ignore_errors: yes
 
 ##
 - name: wildFly start service
