@@ -263,4 +263,4 @@
     - { role: ipst.ipst }
     - { role: ipst.final , when: "ddb_process == True", become: "yes" }
     - { role: ipst.hades , when: "hades_process == True", become: "yes" }
-
+    - { role: samples.nordic44, when: "installNordic44 is defined", tags: 'Nordic44'}
