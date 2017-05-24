@@ -23,5 +23,6 @@
 #      - openmpi-devel
     - zlib-devel
     - wget
-    - mysql-server
+    - mariadb-server
+    - mariadb
 #    - expect
