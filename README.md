@@ -17,8 +17,9 @@ This ansible playbook builds and installs IPST on a target CentOS linux. In part
  - WildFly
  - DBMaria
  - MATLAB Runtime (MCR)
- - Hades
+ - Hades ( http://www.itesla-pst.org )
  - default data in case of itesla testing
+ - Nordic44 2015 dataset ( http://www.sciencedirect.com/science/article/pii/S2352340917300409 )
 
 * it clones on the target server(s) the iPST project sources from GitHub (pull if the repository already exists), 
 builds the 'platform distribution' and installs it, in place.
@@ -67,7 +68,7 @@ the default target directories are
  - $HOME/security-analysis-result.txt' (processing result file)
 
 need additional local files
- - $HOME/tmp/hades/hades2LF.zip (binay files)
+ - $HOME/tmp/hades/hades2LF.tar.gz (binary file)
  - $HOME/tmp/situations/grovslb1/local/DATA/IIDM/FO/2016/01/01/20160101_0030_FO5_FR0.xiidm.gz (situations)
 
 provide local logging file
@@ -341,7 +342,7 @@ Notes:
 - when variable install_prerequisites is set to False, installations of packages requiring admin rights are skipped (to be used when those packages are already installed on the target machines)
 
 
-3. Run ansible-playbook -i ipst-hosts ./ipst.yml -u USERNAME -k
+3. Run: ansible-playbook -i ipst-hosts ./ipst.yml -u USERNAME -k
 
   ansible connects to the remote servers (listed in ipst-hosts file) as USERNAME (asking interactively for USERNAME's password, when needed - parameter k)
   and starts the build+installation process.
@@ -356,7 +357,8 @@ Notes:
   These parameters could also be set, per host, in the inventory file ipst-hosts (examples in ipst-hosts.example); note that command line parameter names and inventory file names are different
   (e.g. ansible_become_user instead of become-user)
    
-  
+4. To install the Nordic44 dataset, run:  ansible-playbook -i ipst-hosts ./ipst.yml -e "installNordic44=true" -t Nordic44
+
+
   More details on ansible-playbook command and parameters, here:  http://docs.ansible.com/ansible/playbooks_variables.html 
   Privileges escalation related configurations are explained here: http://docs.ansible.com/ansible/become.html
-

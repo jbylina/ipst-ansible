@@ -175,7 +175,7 @@
     hades_process: "{{ user_hades_process|default('False') }}"
 
 ## hades binary archive name
-    hades_archive_name: "{{ user_hades_archive_name |default('hades2LF.zip') }}"
+    hades_archive_name: "{{ user_hades_archive_name |default('hades2LF.tar.gz') }}"
 
 ## local hades binary archive path
     hades_src: "{{ user_hades_src |default('~/tmp/hades') + '/'+hades_archive_name }}"
@@ -258,7 +258,7 @@
     - { role: ipst.openmpi, when: "installPrerequisites == True", become: "yes" }
     - { role: ipst.jdk8, when: "installPrerequisites == True", become: "yes" }
     - { role: ipst.maven, when: "installPrerequisites == True", become: "yes" }
-    - { role: ipst.wildfly, when: "installPrerequisites == True", become: "yes" }
+#    - { role: ipst.wildfly, when: "installPrerequisites == True", become: "yes" }
     - { role: ipst.mcr, when: "installMCR == True", become: "yes" }
     - { role: ipst.ipst }
     - { role: ipst.final , when: "ddb_process == True", become: "yes" }
