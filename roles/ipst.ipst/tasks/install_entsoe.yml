@@ -61,7 +61,7 @@
 
   - name: entsoe stop execution in case of failure
     fail: msg="The execution has failed because of errors."
-    when: installEntsoeScript is defined and installEntsoeScript.rc > 1000
+    when: installEntsoeScript is defined and installEntsoeScript.skipped is not defined and installEntsoeScript.rc > 1000
 
   - name: entsoe check for additional thirdparty files
     local_action: stat path={{ misc_thirdparties_path}}

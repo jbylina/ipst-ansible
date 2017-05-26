@@ -64,7 +64,7 @@
   #
   - name: core stop execution in case of failure
     fail: msg="The execution has failed because of errors."
-    when: installCoreScript is defined and installCoreScript.rc > 1000
+    when: installCoreScript is defined and installCoreScript.skipped is not defined and installCoreScript.rc > 1000
 
   #
   - name: core check for additional thirdparty files
