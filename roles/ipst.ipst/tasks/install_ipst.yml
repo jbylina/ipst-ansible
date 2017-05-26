@@ -44,25 +44,26 @@
     local_action: file state=absent path="{{ ipst_log_file }}"
     when: installScript is defined
       and installScript.skipped is not defined
-  - name: log file
-    local_action: lineinfile
-      dest="{{ ipst_log_file }}"
-      line="{{ {'_name':item._name|default('n/a') ,'cmd':item.cmd|default('n/a') ,'delta':item.delta|default('n/a') ,'end':item.end|default('n/a') ,'rc':item.rc|default('n/a') ,'state':item.state|default('n/a') ,'start':item.start|default('n/a') ,'stdout_lines':item.stdout_lines|default('n/a')} | to_nice_json }}"
-      state=present
-      insertafter=EOF
-      create=True
-    when: item is defined
-      and installScript is defined
-      and installScript.skipped is not defined
-    no_log: True
-    with_items:
-      - "{{ installScript |combine({'_name':'installScript'}) }}"
+
+#  - name: log file
+#    local_action: lineinfile
+#      dest="{{ ipst_log_file }}"
+#      line="{{ {'_name':item._name|default('n/a') ,'cmd':item.cmd|default('n/a') ,'delta':item.delta|default('n/a') ,'end':item.end|default('n/a') ,'rc':item.rc|default('n/a') ,'state':item.state|default('n/a') ,'start':item.start|default('n/a') ,'stdout_lines':item.stdout_lines|default('n/a')} | to_nice_json }}"
+#      state=present
+#      insertafter=EOF
+#      create=True
+#    when: item is defined
+#      and installScript is defined
+#      and installScript.skipped is not defined
+#    no_log: True
+#    with_items:
+#      - "{{ installScript |combine({'_name':'installScript'}) }}"
 
 
   #
   - name: ipst stop execution in case of failure
     fail: msg="The execution has failed because of errors."
-    when: installScript is defined and installScript.rc > 1000
+    when: installScript is defined and installScript.skipped is not defined and installScript.rc > 1000
 
   #
   - name: ipst check for additional thirdparty files
