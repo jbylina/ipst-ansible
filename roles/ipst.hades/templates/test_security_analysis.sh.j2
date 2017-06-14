@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#
+case_home={{ hades_situations_dst }}/{{ hades_situation_test }}
+result_file={{ hades_result_file }}
+itools_home={{ipst_install_path}}
+script_home={{project_script}}
+
+#
+echo $JBOSS_HOME
+echo $MYSQL_HOME
+echo ${case_home}
+echo ${result_file}
+echo
+echo
+
+#
+${script_home}/itesla_adm.sh start
+
+echo "*********** security analysis ******************"
+${itools_home}/bin/itools security-analysis -case-file ${case_home} --output-csv ${result_file}
+echo "********************************************"
+echo
+echo
+
+#
+${script_home}/itesla_adm.sh stop
+
+
+
+echo "--- end"

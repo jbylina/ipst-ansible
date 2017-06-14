@@ -64,7 +64,9 @@
   #
   - name: core stop execution in case of failure
     fail: msg="The execution has failed because of errors."
-    when: installCoreScript is defined and installCoreScript.skipped is not defined and installCoreScript.rc > 1000
+    when: installCoreScript is defined
+      and installCoreScript.skipped is not defined
+      and (installCoreScript.rc > 1000 or '[ERROR] ' in installCoreScript.stdout )
 
   #
   - name: core check for additional thirdparty files
@@ -74,12 +76,14 @@
   #
   - name: ipst-core make sure that the target directory exists
     file: dest="{{ ipst_install_path }}" state=directory mode=0755
-    when:  statThirdpartyFolder.stat.isdir is defined and statThirdpartyFolder.stat.isdir
+    when: statThirdpartyFolder.stat.isdir is defined
+      and statThirdpartyFolder.stat.isdir
 
   #
   - name: ipst-core complete the remote installation with additional thirdparty files (if available)
     unarchive: src={{ item }} dest={{ ipst_install_path  }}
-    when:  statThirdpartyFolder.stat.isdir is defined and statThirdpartyFolder.stat.isdir
+    when:  statThirdpartyFolder.stat.isdir is defined
+      and statThirdpartyFolder.stat.isdir
     register: installAdditionalFiles
     with_fileglob:
       - "{{ misc_thirdparties_path}}/*"

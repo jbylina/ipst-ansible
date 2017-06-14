@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#
+data_home={{ ddb_remote_path }}
+host=127.0.0.1
+port=8080
+itools_home={{ipst_install_path}}
+script_home={{project_script}}
+
+#
+echo data_home=${data_home}
+echo
+
+#
+${script_home}/itesla_adm.sh start
+
+echo "*************** unload *********************"
+${itools_home}/bin/itools ddb-unload --host ${host} --port ${port} --user user --password password
+echo "********************************************"
+echo
+echo
+
+echo "***************** load *********************"
+${itools_home}/bin/itools ddb-load-eurostag --host ${host} --port ${port} --user user --password password --eurostag-version {{ ddb_eurostag_version }} --data-dir ${data_home}
+echo "********************************************"
+echo
+echo
+
+#
+${script_home}/itesla_adm.sh stop
+
+
+echo "--- end"

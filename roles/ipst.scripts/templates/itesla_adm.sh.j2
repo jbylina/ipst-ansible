@@ -1,0 +1,114 @@
+#!/bin/bash
+
+#
+mysql_home={{ mariadb_home }}
+wildfly_home={{ wildfly_prefix }}
+wildfly_log=${wildfly_home}/standalone/log/server.log
+wildfly_pid_file=${wildfly_home}/wildfly.pid
+
+#
+source_home={{ root_sources_path }}
+
+
+
+f_mariadbStart() {
+    echo "*********** mariadb start ******************"
+    echo
+    ${mysql_home}/bin/mysqld_safe --defaults-file=${mysql_home}/my.cnf --no-watch --basedir=${mysql_home} --datadir=${mysql_home}/data --log-error=mysql.err
+    echo "********************************************"
+    echo
+    echo
+}
+
+f_mariadbStop() {
+    echo "*********** mariadb shutdown ******************"
+    echo
+    ${mysql_home}/bin/mysqladmin -uroot shutdown
+    echo "********************************************"
+    echo
+    echo
+}
+
+f_wildflyStart() {
+    #
+    if [ -e ${wildfly_pid_file} ]; then
+        echo "wildfly is already running"
+        return
+    fi
+
+    #
+    echo "*********** wildfly start ******************"
+    echo
+    # ${wildfly_home}/bin/standalone.sh >/dev/null 2>&1 &
+    ${wildfly_home}/bin/standalone.sh >/dev/null 2>&1 & echo $! > ${wildfly_pid_file}
+    sleep 15
+
+    #echo ${wildfly_pid} > ${wildfly_pid_file}
+    wildfly_pid=$(cat ${wildfly_pid_file})
+    echo "pid=${wildfly_pid}"
+    echo "pid_file=${wildfly_pid_file}"
+    echo "log=${wildfly_log}"
+    echo "********************************************"
+    echo
+    echo
+}
+
+f_wildflyStop() {
+    echo "*********** wildfly shutdown ******************"
+    ${wildfly_home}/bin/jboss-cli.sh --connect command=:shutdown
+    echo "********************************************"
+    echo
+    echo
+    rm ${wildfly_pid_file}
+}
+
+
+f_updateSources() {
+    echo "*********** update ipst sources ******************"
+    current_path = $(pwd)
+    # update ipst-core module
+    cd ${source_home}/ipst-core
+    git pull
+    mvn install
+    # update ipst-entsoe module
+    cd ${source_home}/ipst-entsoe
+    git pull
+    mvn install
+    # update ipst module
+    cd ${source_home}/ipst
+    git pull
+    mvn install
+    # update ear
+    echo "updating ear"
+    cp ${source_home}/ipst/iidm-ddb/iidm-ddb-ear/target/iidm-ddb-ear.ear ${wildfly_home}/standalone/deployments/iidm-ddb-ear.ear
+    cd ${current_path}
+}
+
+f_usage() {
+    clear
+    echo "----------------------------------------------"
+    echo "itesla admin"
+    echo
+    echo "    ./itesla_adm.sh start  ==> start mariadb and wildfly"
+    echo "    ./itesla_adm.sh stop   ==> shutdown mariadb and wildfly"
+    echo "    ./itesla_adm.sh update ==> update ipst sources"
+    echo
+    echo "----------------------------------------------"
+}
+
+###
+if [ $# -eq 0 ]; then
+    f_usage
+    exit
+fi
+
+###
+case $1 in
+    start) f_mariadbStart; f_wildflyStart;;
+    stop) f_wildflyStop; f_mariadbStop;;
+    update) f_updateSources;;
+    *) f_usage ;
+esac
+
+
+

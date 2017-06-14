@@ -1,8 +1,8 @@
 ---
 # defaults file for ipst.maven
 
-# maven prefix install path, default is /opt when user_maven_dest_path is undefined
-maven_dest_path: "{{ user_maven_dest_path |default('/opt') }}"
+# maven prefix install path, default is project_home/maven when user_maven_dest_path is undefined
+maven_dest_path: "{{ project_home + '/' + user_maven_dest_path |default('maven') }}"
 
 # maven install version, default is 3.0.5 when user_maven_version is undefined
 maven_version: "{{ user_maven_version |default('3.0.5') }}"

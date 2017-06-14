@@ -61,7 +61,9 @@
 
   - name: entsoe stop execution in case of failure
     fail: msg="The execution has failed because of errors."
-    when: installEntsoeScript is defined and installEntsoeScript.skipped is not defined and installEntsoeScript.rc > 1000
+    when: installEntsoeScript is defined
+      and installEntsoeScript.skipped is not defined
+      and (installEntsoeScript.rc > 1000 or '[ERROR] ' in installEntsoeScript.stdout )
 
   - name: entsoe check for additional thirdparty files
     local_action: stat path={{ misc_thirdparties_path}}
@@ -69,11 +71,13 @@
 
   - name: entsoe make sure that the target directory exists
     file: dest="{{ ipst_install_path }}" state=directory mode=0755
-    when:  statThirdpartyFolder.stat.isdir is defined and statThirdpartyFolder.stat.isdir
+    when: statThirdpartyFolder.stat.isdir is defined
+      and statThirdpartyFolder.stat.isdir
 
   - name: entsoe complete the remote installation with additional thirdparty files (if available)
     unarchive: src={{ item }} dest={{ ipst_install_path  }}
-    when:  statThirdpartyFolder.stat.isdir is defined and statThirdpartyFolder.stat.isdir
+    when:  statThirdpartyFolder.stat.isdir is defined
+      and statThirdpartyFolder.stat.isdir
     register: installAdditionalFiles
     with_fileglob:
       - "{{ misc_thirdparties_path}}/*"

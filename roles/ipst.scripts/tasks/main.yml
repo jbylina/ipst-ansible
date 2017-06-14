@@ -1,0 +1,24 @@
+---
+#
+# Copyright (c) 2016, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+# ipst.scripts:  installs some utility scripts
+
+- name: Install utility script
+  template: src=itesla_adm.sh.j2
+            dest="{{ project_script }}/itesla_adm.sh"
+            mode=a+x
+
+
+- name: Update bashrc file
+  blockinfile:
+    dest: "{{ ansible_env.HOME }}/.bashrc"
+    marker: "## {mark} script"
+    block: |
+      export PATH={{ project_script }}:$PATH
+    create: yes
+
