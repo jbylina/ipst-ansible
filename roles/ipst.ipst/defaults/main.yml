@@ -1,9 +1,6 @@
 ---
 # defaults file for ipst
 
-##
-maven_proxies: "{{ user_maven_proxies |default([]) }}"
-
 ##-- ipst
 ## ipst github repo
 ipst_github_uri: "{{ user_ipst_github |default('https://github.com/itesla/ipst.git') }}"

@@ -289,13 +289,13 @@
   roles:
     #- { role: ipst.common, when: "installPrerequisites == True", become: "yes" }
     #- { role: ipst.openmpi, when: "installPrerequisites == True", become: "yes" }
-    #- { role: ipst.jdk8, when: "installPrerequisites == True" }
-    #- { role: ipst.maven, when: "installPrerequisites == True" }
+    - { role: ipst.jdk8, when: "installPrerequisites == True" }
+    - { role: ipst.maven, when: "installPrerequisites == True" }
     - { role: ipst.mariadb, when: "installPrerequisites == True"  }
     - { role: ipst.wildfly, when: "installPrerequisites == True" }
     #- { role: ipst.mcr, when: "installMCR == True", become: "yes" }
     - { role: ipst.ipst }
     - { role: ipst.scripts }
     - { role: ipst.final , when: "ddb_process == True" }
-    #- { role: ipst.hades , when: "hades_process == True" }
+    - { role: ipst.hades , when: "hades_process == True" }
     - { role: samples.nordic44, when: "installNordic44 is defined", tags: 'Nordic44'}

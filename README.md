@@ -233,6 +233,10 @@ user_maven_mirror: "http://apache.mirrors.ovh.net/ftp.apache.org/dist/maven/mave
 #    - {host: "proxyhttps.mydomain.com", port: "443", username: "username", password: "password", protocol: "https"}
 
 
+## maven repository location, default value is undefined
+#user_maven_repository: "$HOME/.m2/repository"
+
+
 ##--------------------------------------------------------------------------
 ##-- define wildfly user options
 ##    ipst.wildfly/defaults/main.yml file define default values
