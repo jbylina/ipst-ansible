@@ -139,6 +139,11 @@ user_maven_mirror: "http://apache.mirrors.ovh.net/ftp.apache.org/dist/maven/mave
 ##    (default value is http://download.jboss.org/wildfly/8.1.0.Final/wildfly-8.1.0.Final.zip)
 user_wildfly_url: http://download.jboss.org/wildfly/8.1.0.Final/wildfly-8.1.0.Final.zip
 
+## wildfly_dest_path - OS target wildfly install path
+##    (default value is ansible_env.HOME)
+user_wildfly_dest_path: "{{ ansible_env.HOME }}/wildfly"
+
+
 
 
 ##--------------------------------------------------------------------------

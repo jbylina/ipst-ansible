@@ -29,6 +29,8 @@
     dest: "{{ jdk8_home }}"
     extra_opts: ['--strip=1']
   register: jdk8installed
+- debug: var="jdk8installed"
+  when: "{{ jdk8_log == '1' }}"
 
 # manage via alternative
 #- name: Make Java available for system
