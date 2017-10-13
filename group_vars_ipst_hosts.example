@@ -64,12 +64,12 @@ user_ipst_github: "https://github.com/itesla/ipst.git"
 
 
 ## core_source - OS target source core module directory relative to the source home
-##    (default value is ipst-core )
-user_core_source: "ipst-core"
+##    (default value is powsybl-core )
+user_core_source: "powsybl-core"
 
 ## core_github - core github repository
-##    (default value is https://github.com/itesla/ipst-core.git)
-user_core_github: https://github.com/itesla/ipst-core.git
+##    (default value is https://github.com/itesla/powsybl-core.git)
+user_core_github: https://github.com/itesla/powsybl-core.git
 
 
 
@@ -97,8 +97,8 @@ user_jdk8_url: "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a09
 
 
 ##- jdk8_home - OS target jdk home, relative to the project home
-##    (default value is java/jdk1.8.0_131)
-user_jdk8_home: "java/jdk1.8.0_131"
+##    (default value is java/jdk1.8.0_144)
+user_jdk8_home: "java/jdk1.8.0_144"
 
 
 ##- jdk8_log - 0 no screen debug

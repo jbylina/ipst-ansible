@@ -84,8 +84,8 @@
     root_sources_path_default: "sources"
     root_sources_path: "{{ project_home + '/' + user_source_root|default(root_sources_path_default) }}"
 
-## path on target OS where ipst-core sources will be cloned/updated, relative to root_sources_path
-    core_sources_path_default: "ipst-core"
+## path on target OS where powsybl-core sources will be cloned/updated, relative to root_sources_path
+    core_sources_path_default: "powsybl-core"
     core_sources_path: "{{ root_sources_path + '/' + user_core_source|default(core_sources_path_default) }}"
 
 ## path on target OS where ipst-entsoe sources will be cloned/updated, relative to root_sources_path
@@ -101,7 +101,7 @@
     ipst_thirdparty_path: "{{ project_home + '/' + user_source_thirdparty|default(ipst_thirdparty_path_default) }}"
 
 ## path on target OS where ipst will be installed, relative to project home
-    ipst_install_path_default: "itesla"
+    ipst_install_path_default: "itools"
     ipst_install_path: "{{ project_home + '/' + user_project_bin|default(ipst_install_path_default) }}"
 
 ## path on local OS, source of additional thirdparty libraries to be installed (as-is: untgz to ipst_install_path)
@@ -126,11 +126,11 @@
 ## jdk install
 ##
 ## jdk archive url
-    jdk8_url_default: "http://download.oracle.com/otn-pub/java/jdk/8u112-b15/jdk-8u112-linux-x64.tar.gz"
+    jdk8_url_default: "http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135/jdk-8u144-linux-x64.tar.gz"
     jdk8_url: "{{ user_jdk8_url |default(jdk8_url_default) }}"
 
 ## OS target jdk installation path, relative to project home
-    jdk8_home_default: "{{ 'java/jdk1.8.0_112' }}"
+    jdk8_home_default: "{{ 'java/jdk1.8.0_144' }}"
     jdk8_home: "{{ project_home+'/'+ user_jdk8_home |default( jdk8_home_default ) }}"
 
 ## 1= log is activate, log is inactivate otherwise
@@ -142,7 +142,7 @@
 ##
 
 ##
-    mariadb_version_default: "10.1.22"
+    mariadb_version_default: "10.2.9"
     mariadb_version: "{{ user_mariadb_version |default( mariadb_version_default ) }}"
 
 ##
@@ -153,7 +153,7 @@
     mariadb_archivename: "mariadb-{{ mariadb_version }}-linux-x86_64.tar.gz"
 
 ##
-    mariadb_url: "https://downloads.mariadb.org/interstitial/mariadb-{{ mariadb_version }}/bintar-linux-x86_64/mariadb-{{ mariadb_version }}-linux-x86_64.tar.gz"
+    mariadb_url: "http://ftp.igh.cnrs.fr/pub/mariadb/mariadb-10.2.9/bintar-linux-systemd-x86_64/mariadb-10.2.9-linux-systemd-x86_64.tar.gz"
 
 ##
     mariadb_conf: "{{ mariadb_home }}/my.cnf"
@@ -287,8 +287,8 @@
 ###
 
   roles:
-    #- { role: ipst.common, when: "installPrerequisites == True", become: "yes" }
-    #- { role: ipst.openmpi, when: "installPrerequisites == True", become: "yes" }
+    - { role: ipst.common, when: "installPrerequisites == True", become: "yes" }
+    - { role: ipst.openmpi, when: "installPrerequisites == True", become: "yes" }
     - { role: ipst.jdk8, when: "installPrerequisites == True" }
     - { role: ipst.maven, when: "installPrerequisites == True" }
     - { role: ipst.mariadb, when: "installPrerequisites == True"  }

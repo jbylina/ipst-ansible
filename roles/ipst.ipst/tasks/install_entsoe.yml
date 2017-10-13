@@ -4,7 +4,7 @@
   - debug:
       msg: " log file: {{ entsoe_log_file }}"
 
-# clone/update ipst-core project from github
+# clone/update powsybl-core project from github
 # Note: update does not work when there are local modifications (e.g. when some of the project's file are edited on-site)
   - name: entsoe retrieve ipst-entsoe sources from github
     git: repo="{{ entsoe_github_uri }}"

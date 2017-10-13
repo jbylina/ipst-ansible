@@ -7,11 +7,11 @@
 #
 # 
 
-# clone/update ipst-core from github
+# clone/update powsybl-core from github
   - include: install_core.yml
 
 # clone/update ipst-entsoe from github
-  - include: install_entsoe.yml
+#   - include: install_entsoe.yml
 
 # clone/update ipst from github
   - include: install_ipst.yml

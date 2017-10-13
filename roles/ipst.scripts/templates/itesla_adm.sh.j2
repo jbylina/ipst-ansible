@@ -66,8 +66,8 @@ f_wildflyStop() {
 f_updateSources() {
     echo "*********** update ipst sources ******************"
     current_path = $(pwd)
-    # update ipst-core module
-    cd ${source_home}/ipst-core
+    # update powsybl-core module
+    cd ${source_home}/powsybl-core
     git pull
     mvn install
     # update ipst-entsoe module
