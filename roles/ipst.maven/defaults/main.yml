@@ -24,7 +24,7 @@ maven_url: "{{ maven_mirror }}/{{ maven_bin_filename  }}"
 maven_proxies: "{{ user_maven_proxies |default([]) }}"
 
 #{{ user_maven_repository | regex_replace('[$]HOME', '${env.HOME}')  }}
-#maven_repository_tmp: "{{ user_maven_repository| default('$HOME/.m2/repository') }}"
+maven_repository_default: "{{ ansible_env.HOME }}/.m2/repository"
 
-maven_repository: "{{ user_maven_repository| default('$HOME/.m2/repository') }}"
+maven_repository: "{{ user_maven_repository| default(maven_repository_default) }}"
 maven_repository_settings: "{{ maven_repository | regex_replace('[$]HOME', '${env.HOME}')  }}"

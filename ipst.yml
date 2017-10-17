@@ -177,7 +177,7 @@
     ddb_archive_name: "{{ user_ddb_archive_name |default(ddb_archive_name_default) }}"
 
 ## local archive path of the data to integrate
-    ddb_locale_path_default: "$HOME/"
+    ddb_locale_path_default: "{{ ansible_env.HOME }}/"
     ddb_locale_path: "{{ user_ddb_locale_path |default(ddb_locale_path_default) }}"
 
 ## OS target data path to integrate
@@ -207,11 +207,11 @@
     hades_process: "{{ user_hades_process|default('False') }}"
 
 ## hades binary archive name
-    #hades_archive_name: "{{ user_hades_archive_name |default('hades2LF.tar.gz') }}"
-    hades_archive_name: "{{ user_hades_archive_name |default('hades2LF.zip') }}"
+    hades_archive_name: "{{ user_hades_archive_name |default('hades2LF.tar.gz') }}"
+    #hades_archive_name: "{{ user_hades_archive_name |default('hades2LF.zip') }}"
 
 ## local hades binary archive path
-    hades_src: "{{ user_hades_src |default('$HOME/tmp/hades') + '/'+hades_archive_name }}"
+    hades_src: "{{ user_hades_src |default('/$HOME/tmp/hades') + '/'+hades_archive_name }}"
 
 ## target OS hades prefix path install relative to project home
     hades_dst: "{{ project_home + '/'+user_hades_dst |default( '' ) }}"
@@ -226,7 +226,7 @@
     hades_situation_prefix: "{{ user_hades_situation_prefix |default('/DATA/IIDM/FO/2016/01/01') }}"
 
 ## local test situation path
-    hades_situations_src: "{{ user_hades_situations_prefix_src |default('$HOME/tmp/situations/grovslb1/local') + hades_situation_prefix + '/'+ hades_situation_test }}"
+    hades_situations_src: "{{ user_hades_situations_prefix_src |default('/$HOME/tmp/situations/grovslb1/local') + hades_situation_prefix + '/'+ hades_situation_test }}"
 
 ## target OS test situation path
     hades_situations_dst: "{{ project_home + '/' + user_hades_situations_home|default( 'situations' + hades_situation_prefix) }}"

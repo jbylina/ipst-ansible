@@ -9,8 +9,8 @@
 # ipst.commons:  installs development tools and some libraries: c/c++, make, cmake, etc.
 
 #
-# - name: install development tools from CentOS mirror
-#   yum: name="@Development tools" state=present
+- name: install development tools from CentOS mirror
+  yum: name="@Development tools" state=present
 
 #
 - name: install packages from CentOS mirror

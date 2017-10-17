@@ -31,7 +31,7 @@
   # install ipst
   - name: ipst build and install ipst
     # Using shell because 'command' does not handle well redirections, pipes, etc.  Using -l to inherit the environment variables, correctly
-    shell: /bin/bash -lc "{{ ipst_install_cmd }}"
+    shell: /bin/bash -lc "{{ ipst_install_cmd }} > /tmp/ipst.log"
     args:
       chdir: "{{ipst_sources_path}}"
     when: (gitop.changed or forceBuild)

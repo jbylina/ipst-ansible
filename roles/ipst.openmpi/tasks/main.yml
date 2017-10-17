@@ -18,7 +18,7 @@
     - perl
 
 - name: check if already installed
-  stat: path={{ openmpi_prefix }}
+  stat: path={{ openmpi_prefix }}/bin/mpirun
   register: openmpi_dir
   changed_when: openmpi_dir.stat.exists == False
 

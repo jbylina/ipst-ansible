@@ -15,3 +15,11 @@
 
 # clone/update ipst from github
   - include: install_ipst.yml
+  
+  - name: Update bashrc file
+    blockinfile:
+        dest: "{{ ansible_env.HOME }}/.bashrc"
+        marker: "## {mark} itools"
+        block: |
+            export PATH={{ipst_install_path}}/bin:$PATH        
+        create: yes

@@ -23,6 +23,10 @@
     - debug:
         msg: " log file: {{ hades_log_file }}"
 
+    - debug:
+        msg: " hades_src: {{ hades_src }}"
+        
+
     - name: Hades binary extract
       unarchive: src="{{ hades_src }}" dest="{{ hades_dst }}" creates="{{ hades_create }}"
       register: hades_install
@@ -45,7 +49,7 @@
       when: hades_install|success
       register: hadesConfig
       template: src=itesla_config.xml.j2
-                dest="{{ ansible_env.HOME }}/.itesla/config.xml"
+                dest="{{ ansible_env.HOME }}/.itools/config.xml"
                 force=no
     #
     - name: Create data directory

@@ -14,7 +14,7 @@
 
 # check
 - name: check if already installed
-  stat: path={{ jdk8_home }}
+  stat: path={{ jdk8_home }}/bin/java
   register: jdk8_dir
   changed_when: jdk8_dir.stat.exists == False
 
