@@ -293,7 +293,7 @@
     - { role: ipst.maven, when: "installPrerequisites == True" }
     - { role: ipst.mariadb, when: "installPrerequisites == True"  }
     - { role: ipst.wildfly, when: "installPrerequisites == True" }
-    #- { role: ipst.mcr, when: "installMCR == True", become: "yes" }
+    - { role: ipst.mcr, when: "installMCR == True", become: "yes" }
     - { role: ipst.ipst }
     - { role: ipst.scripts }
     - { role: ipst.final , when: "ddb_process == True" }
