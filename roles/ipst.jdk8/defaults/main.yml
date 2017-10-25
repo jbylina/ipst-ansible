@@ -3,3 +3,6 @@
 
 # archive name
 jdk8_archivename: "{{ jdk8_url.split('/')[-1] }}"
+
+#
+jdk8_tmp : "{{ project_temporary + '/' + jdk8_archivename }}"

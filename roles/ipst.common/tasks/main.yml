@@ -16,6 +16,8 @@
 - name: install packages from CentOS mirror
   yum: state=present name={{ item }}
   with_items:
+    - tar
+    - git
     - cmake
     - bzip2-devel
 # note: prepackaged openmpi libraries do not to work with IPST (openmpi must be compiled with a specific flag enabled: --enable-mpi-thread-multiple )
@@ -23,6 +25,4 @@
 #      - openmpi-devel
     - zlib-devel
     - wget
-    - mariadb-server
-    - mariadb
 #    - expect

@@ -40,12 +40,12 @@ builds the 'platform distribution' and installs it, in place.
 
 The default target directories for iPST are (these are all configurable, see below in the usage section): 
  - $HOME/ipst_ansible/ipst  (iPST sources) 
- - $HOME/ipst_ansible/ipst-core  (iPST-core sources)
+ - $HOME/ipst_ansible/powsybl-core  (powsybl-core sources)
  - $HOME/ipst_ansible/ipst-entsoe (iPST-entsoe sources)
  - $HOME/ipst_ansible/thirdparty  (thirdparty libraries: boost, hdf5, etc.)
  - $HOME/itesla (iPST binaries)
 
-ipst, ipst-core, ipst-entsoe provide a local logging file
+ipst, powsybl-core, ipst-entsoe provide a local logging file
  - << playbook_dir >>/install_ipst_<< target_machine >>.log
  - << playbook_dir >>/install_core_<< target_machine >>.log
  - << playbook_dir >>/install_entsoe_<< target_machine >>.log
@@ -128,13 +128,13 @@ force_build: False
 ##--------------------------------------------------------------------------
 ##-- ispt parameters
 
-## project_home - OS target project root path, will be contain all source and binary files
+## project home - OS target project root path, will be contain all source, binary files and standalone tools
 ##   (default value is ansible_env.HOME)
-user_project_home: "{{ ansible_env.HOME }}/itesla_project"
+user_project_home: "{{ ansible_env.HOME }}"
 
-## project_temporary - OS target project temporary file path, relative to user_project_home
-##   (default value is /tmp)
-user_project_temporary: "/tmp"
+## project_temporary - OS target project temporary file path, relative to the project home
+##   (default value is tmp)
+user_project_temporary: "tmp"
 
 ## log_file_prefix - prefix for all locale log file
 ##   (default value is {{ playbook_dir }}/install)
@@ -145,23 +145,21 @@ user_log_file_prefix: "{{ playbook_dir }}/install"
 user_log_file_postfix: "{{ inventory_hostname+'.log' }}"
 
 
-
-
-## project_bin - OS target binary directory relative to user_project_home
-##    (default value is /itesla)
-user_project_bin: "/itesla"
+## project_bin - OS target binary directory relative to the project home
+##    (default value is itesla)
+user_project_bin: "itesla"
 
 ## project_branch - github branch project
 ##    (default value is master)
 user_project_branch: "master"
 
-## source_root - OS target source project directory relative to user_project_home
-##    (default value is /ipst_ansible)
-user_source_root: "/ipst_ansible"
+## source_root - OS target source project directory relative to the project home
+##    (default value is ipst_ansible)
+user_source_root: "sources"
 
-## ipst_source - OS target source ipst module directory relative to user_source_home
-##    (default value is /ipst)
-user_ipst_source: "/ipst"
+## ipst_source - OS target source ipst module directory relative to the source home
+##    (default value is ipst)
+user_ipst_source: "ipst"
 
 ## ipst_github - ipst github repository
 ##    (default value is https://github.com/itesla/ipst.git)
@@ -169,29 +167,28 @@ user_ipst_github: "https://github.com/itesla/ipst.git"
 
 
 
-## core_source - OS target source core module directory relative to user_source_home
-##    (default value is /ipst-core )
-user_core_source: "/ipst-core"
+## core_source - OS target source core module directory relative to the source home
+##    (default value is powsybl-core )
+user_core_source: "powsybl-core"
 
 ## core_github - core github repository
-##    (default value is https://github.com/itesla/ipst-core.git)
-user_core_github: https://github.com/itesla/ipst-core.git
+##    (default value is https://github.com/itesla/powsybl-core.git)
+user_core_github: https://github.com/itesla/powsybl-core.git
 
 
 
-## entsoe_source - OS target source entsoe module directory relative to user_source_home
-##    (default value is /ipst-entsoe)
-user_entsoe_source: "/ipst-entsoe"
+## entsoe_source - OS target source entsoe module directory relative to the source home
+##    (default value is ipst-entsoe)
+user_entsoe_source: "ipst-entsoe"
 
 ## entsoe_github - entsoe github repository
 ##    (default value is https://github.com/iTesla/ipst-entsoe.git)
 user_entsoe_github: https://github.com/iTesla/ipst-entsoe.git
 
 
-## source_thirdparty - OS target source thirdparty module directory relative to user_source_home
-##    (default value is /thirdparty)
-user_source_thirdparty: "/thirdparty"
-
+## source_thirdparty - OS target source thirdparty module directory relative to the project home
+##    (default value is thirdparty)
+user_source_thirdparty: "thirdparty"
 
 
 
@@ -200,12 +197,13 @@ user_source_thirdparty: "/thirdparty"
 ##-- define java user parameters
 
 ##- jdk8_url - define jdk url
-##    (default value is http://download.oracle.com/otn-pub/java/jdk/8u112-b15/jdk-8u112-linux-x64.tar.gz)
-user_jdk8_url: http://download.oracle.com/otn-pub/java/jdk/8u112-b15/jdk-8u112-linux-x64.tar.gz
+user_jdk8_url: "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz"
 
-##- jdk8_home - OS target jdk home
-##    (default value is /HOME/ansible_user/jdk1.8.0_112)
-user_jdk8_home: "{{ ansible_env.HOME }}/java/jdk1.8.0_112"
+
+##- jdk8_home - OS target jdk home, relative to the project home
+##    (default value is java/jdk1.8.0_144)
+user_jdk8_home: "java/jdk1.8.0_144"
+
 
 ##- jdk8_log - 0 no screen debug
 ##    (default value is 0)
@@ -218,21 +216,25 @@ user_jdk8_log: 1
 ##    ipst.maven/defaults/main.yml file define default values
 
 ## maven_version - maven install version
-##    (default value is 3.0.5)
-user_maven_version: "3.0.5"
+##    (default value is 3.5.0)
+user_maven_version: "3.5.0"
 
-## maven_dest_path - OS target maven install path
-##    (default value is /opt)
-user_maven_dest_path: "/opt"
+## maven_dest_path - OS target maven parent install path , relative to the project home
+##    (default value is maven)
+user_maven_dest_path: "maven"
 
 ## maven_mirror - maven mirror prefix url
-##    (default value is http://archive.apache.org/dist/maven/binaries)
-user_maven_mirror: "http://archive.apache.org/dist/maven/binaries"
+##    (default value is http://apache.mirrors.ovh.net/ftp.apache.org/dist/maven/maven-3/3.5.0/binaries)
+user_maven_mirror: "http://apache.mirrors.ovh.net/ftp.apache.org/dist/maven/maven-3/3.5.0/binaries"
 
 ## maven_proxies - maven proxies
 ##    (default value is none)
 #user_maven_proxies:
 #    - {host: "proxyhttps.mydomain.com", port: "443", username: "username", password: "password", protocol: "https"}
+
+
+## maven repository location, default value is undefined
+#user_maven_repository: "$HOME/.m2/repository"
 
 
 ##--------------------------------------------------------------------------
@@ -243,11 +245,6 @@ user_maven_mirror: "http://archive.apache.org/dist/maven/binaries"
 ##    (default value is http://download.jboss.org/wildfly/8.1.0.Final/wildfly-8.1.0.Final.zip)
 user_wildfly_url: http://download.jboss.org/wildfly/8.1.0.Final/wildfly-8.1.0.Final.zip
 
-## wildfly_dest_path - OS target wildfly install path
-##    (default value is ansible_env.HOME)
-user_wildfly_dest_path: "{{ ansible_env.HOME }}/wildfly"
-
-
 
 
 ##--------------------------------------------------------------------------
@@ -256,8 +253,8 @@ user_wildfly_dest_path: "{{ ansible_env.HOME }}/wildfly"
 user_ear_name: "iidm-ddb-ear.ear"
 
 ## ear_path - ear source path, relative to the source install path
-##    (default value is /iidm-ddb/iidm-ddb-ear/target)
-user_ear_path: "/iidm-ddb/iidm-ddb-ear/target"
+##    (default value is iidm-ddb/iidm-ddb-ear/target)
+user_ear_path: "iidm-ddb/iidm-ddb-ear/target"
 
 
 ##--------------------------------------------------------------------------
@@ -274,9 +271,9 @@ user_ddb_archive_name: "minimalist_DDB.zip"
 ##    (default value is ~/)
 user_ddb_locale_path: "~/"
 
-## ddb_remote_path - OS target full path for the data
-##    (default value is {{ ansible_env.HOME + '/minimalist_DDB' }})
-user_ddb_remote_path: "{{ ansible_env.HOME + '/minimalist_DDB' }}"
+## ddb_remote_path - OS target path for the data relative to the home project
+##    (default value is minimalist_DDB)
+user_ddb_remote_path: "minimalist_DDB"
 
 ## ddb_eurostag_version - define the eurostag version
 ##     (default value is 5.1.1)
@@ -290,20 +287,20 @@ user_ddb_eurostag_version: "5.1.1"
 user_hades_process: False
 
 ## hades_archive_name - hades binary archive name
-##    (default value is hades2LF.zip)
-user_hades_archive_name: hades2LF.zip
+##    (default value is hades2LF.tar.gz)
+user_hades_archive_name: hades2LF.tar.gz
 
 ## hades_src - local hades binary path archive
 ##    (default value is ~/tmp/hades)
 user_hades_src: "~/tmp/hades"
 
-## hades_dst - OS target hades binary prefix destination path
-##    (default value is {{ ansible_env.HOME }})
-user_hades_dst: "{{ ansible_env.HOME }}/hades"
+## hades_dst - OS target hades binary prefix destination path, relative to the project home
+##    (default value is empty)
+user_hades_dst: ""
 
 ## hades_create - OS target hades binary destination path relative to user_hades_dst
-##    (default value is /hades2LF)
-user_hades_create: "/hades2LF"
+##    (default value is hades2LF)
+user_hades_create: "hades2LF"
 
 ## hades_situation_test - this is the situation to integrate to hades
 ##    (default value is 20160101_0030_FO5_FR0.xiidm.gz)
@@ -317,13 +314,13 @@ user_hades_situation_prefix: "/DATA/IIDM/FO/2016/01/01"
 ##    (default value is ~/tmp/situations/grovslb1/local)
 user_hades_situations_prefix_src: "~/tmp/situations/grovslb1/local"
 
-## OS target situation path
-##    (default value is {{ ansible_env.HOME }})
-user_hades_situations_home: "{{ ansible_env.HOME }}"
+## OS target situation path, relative to the project home
+##    (default value is empty)
+user_hades_situations_home: ""
 
-## OS target hades processing result
-##    (default value is {{ ansible_env.HOME+'/security-analysis-result.txt' }})
-user_hades_result_file: "{{ ansible_env.HOME+'/security-analysis-result.txt' }}"
+## OS target hades processing result, relative to the project home
+##    (default value is security-analysis-result.txt)
+user_hades_result_file: "security-analysis-result.txt"
 
 ## activate a disclaimer for hades usage, if activate, process is stopped meanwhile user press [Enter] key
 ##    (default value is false)

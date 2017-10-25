@@ -40,4 +40,15 @@
   when: openmpiinstalled|success
   register: openmpi_envvars_config
   template: src=openmpi_env.sh.j2 dest="/etc/profile.d/openmpi-{{ openmpi_version }}_env.sh" owner=root group=root
+  
+- name: Update bashrc file
+  blockinfile:
+    dest: "{{ ansible_env.HOME }}/.bashrc"
+    marker: "## {mark} openmpi"
+    block: |
+        OPENMPI_PREFIX=/opt/openmpi-{{ openmpi_version }}
+        export PATH=$OPENMPI_PREFIX/bin:$PATH
+        export LD_LIBRARY_PATH=$OPENMPI_PREFIX/lib:$LD_LIBRARY_PATH
+    create: yes
+ 
 

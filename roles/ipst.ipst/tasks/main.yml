@@ -7,20 +7,19 @@
 #
 # 
 
-# maven: create a settings.xml for the current user, with proxy info (if a setting.xml file does not already exist)
-  - stat: path={{ ansible_env.HOME }}/.m2/settings.xml
-    register: maven_user_settings
-  - name: if it does not exist
-    file: path={{ ansible_env.HOME }}/.m2 state=directory
-  - name: create a maven settings.xml
-    template: src=maven_settings.xml.j2 dest={{ ansible_env.HOME }}/.m2/settings.xml
-    when: not maven_user_settings.stat.exists
-
-# clone/update ipst-core from github
+# clone/update powsybl-core from github
   - include: install_core.yml
 
 # clone/update ipst-entsoe from github
-  - include: install_entsoe.yml
+#   - include: install_entsoe.yml
 
 # clone/update ipst from github
   - include: install_ipst.yml
+  
+  - name: Update bashrc file
+    blockinfile:
+        dest: "{{ ansible_env.HOME }}/.bashrc"
+        marker: "## {mark} itools"
+        block: |
+            export PATH={{ipst_install_path}}/bin:$PATH        
+        create: yes

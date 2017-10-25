@@ -15,8 +15,7 @@
 
 # create the wildfly home directory if not exist
 - name: create home folder
-  file: state=directory
-        path="{{ wildfly_prefix }}"
+  file: state=directory path="{{ wildfly_prefix }}"
   register: wildfly_create_folder_log
 
 #
@@ -24,15 +23,27 @@
   unarchive:
       copy: no
       src: "/tmp/{{ wildfly_archivename }}"
-      dest: "{{ wildfly_dest_path }}"
+      dest: "{{ project_home }}"
   ignore_errors: True
   register: wildflyinstalled
 
+# define env variables
+- name: Update bashrc file
+  blockinfile:
+    dest: "{{ ansible_env.HOME }}/.bashrc"
+    marker: "## {mark} wildfly"
+    block: |
+      export JBOSS_HOME={{ wildfly_prefix }}
+      export PATH=$JBOSS_HOME/bin:$PATH
+    create: yes
+
 #
-- name: add environment variables config file
-  when: wildflyinstalled|success
-  register: wildfly_envvars_config
-  template: src=wildfly_env.sh.j2 dest="/etc/profile.d/wildfly_env.sh" owner=root group=root
+#- name: add environment variables config file
+#  when: wildflyinstalled|success
+#  register: wildfly_envvars_config
+#  template: src=wildfly_env.sh.j2 dest="/etc/profile.d/wildfly_env.sh"
+#   #owner=root group=root
+#  #become: False
 
 #
 #- name: Fix ownership
@@ -40,43 +51,42 @@
 
 #
 - name: create mysql connector directory
-  file: path="$JBOSS_HOME/modules/com/mysql/main"
-        state=directory owner=root group=root
+  file: path="{{ wildfly_prefix }}/modules/com/mysql/main"
+        state=directory
 
 #
 - name: download mysql connector
   command: "wget -q -O /tmp/mysql-connector-java-5.1.23-bin.jar.zip --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' http://www.java2s.com/Code/JarDownload/mysql/mysql-connector-java-5.1.23-bin.jar.zip"
   when: wildflyinstalled|success
   register: res
-- debug: var="res"
 
 #
 - name: connector extract
-  unarchive: copy=no src="/tmp/mysql-connector-java-5.1.23-bin.jar.zip" dest="$JBOSS_HOME/modules/com/mysql/main" creates="$JBOSS_HOME/modules/com/mysql/main/mysql-connector-java-5.1.23-bin.jar" owner=root group=root
+  unarchive: copy=no src="/tmp/mysql-connector-java-5.1.23-bin.jar.zip" dest="{{ wildfly_prefix }}/modules/com/mysql/main" creates="{{ wildfly_prefix }}/modules/com/mysql/main/mysql-connector-java-5.1.23-bin.jar"
   register: wildflyinstalled
 
 #
 - name: add mysql connector config
   when: wildflyinstalled|success
   register: wildfly_module
-  template: src=connector.j2 dest="$JBOSS_HOME/modules/com/mysql/main/module.xml" owner=root group=root
+  template: src=connector.j2 dest="{{ wildfly_prefix }}/modules/com/mysql/main/module.xml"
 
 #
 - name: add standalone to standalone
   when: wildflyinstalled|success
   register: wildfly_standalone
-  template: src=standalone.j2 dest="$JBOSS_HOME/standalone/configuration/standalone.xml" owner=root group=root
+  template: src=standalone.j2 dest="{{ wildfly_prefix }}/standalone/configuration/standalone.xml"
 
 #
 - name: add module2
   when: wildflyinstalled|success
   register: wildfly_standalone
-  template: src=module.j2 dest="$JBOSS_HOME/modules/system/layers/base/sun/jdk/main/module.xml" owner=root group=root
+  template: src=module.j2 dest="{{ wildfly_prefix }}/modules/system/layers/base/sun/jdk/main/module.xml"
 
 
 # add application user
 - name: add application user
-  shell: $JBOSS_HOME/bin/add-user.sh --silent -e -a -u user -g user -p password
+  shell: "{{ wildfly_prefix }}/bin/add-user.sh --silent -e -a -u user -g user -p password"
   args:
     executable: /bin/bash
   register: res
@@ -84,76 +94,30 @@
 
 # add Management user
 - name: add Management user
-  shell: $JBOSS_HOME/bin/add-user.sh --silent -e -u admin -p password
+  shell: "{{ wildfly_prefix }}/bin/add-user.sh --silent -e -u admin -g admin -p password"
   args:
     executable: /bin/bash
   register: res
 
 # install wildfly as service
-- name: Copy the init script
-  copy:
-    remote_src: True
-    src: $JBOSS_HOME/bin/init.d/wildfly-init-redhat.sh
-    dest: /etc/init.d/wildfly
-    mode: 0755
-  become: true
-  become_user: root
-- name: Copy wildfly conf
-  become: true
-  become_user: root
-  template: src=wildfly.conf.j2
-            dest="/etc/default/wildfly.conf"
+#- name: Copy the init script
+#  copy:
+#    remote_src: True
+#    src: $JBOSS_HOME/bin/init.d/wildfly-init-redhat.sh
+#    dest: /etc/init.d/wildfly
+#    mode: 0755
+#  become: true
+#  become_user: root
+#- name: Copy wildfly conf
+#  become: true
+#  become_user: root
+#  template: src=wildfly.conf.j2
+#            dest="/etc/default/wildfly.conf"
 
-
-#  add user with expect, expect tools should be set in the ipst.common task
-#- name: Add User interactive
-#  #sudo: yes
-#  #sudo_user: root
-#  #become_user: root
-#  shell: |+
-#    set timeout 10
-#    spawn {{wildfly_prefix}}/bin/add-user.sh
-#
-#    expect "b) Application User"
-#    send "b\r"
-#
-#    expect "Username"
-#    send "user500\r"
-#
-#    expect "Password"
-#    send "password\r"
-#
-#    expect "Are you sure you want to use the password entered"
-#    send "yes\r"
-#
-#    expect "Re-enter Password\r"
-#    send "password\r"
-#
-#    expect "What groups do you want this user to belong to?"
-#    send "\r"
-#
-#    expect "Is this correct"
-#    send "yes\r"
-#
-#    expect "Is this new user going to be used for one AS process to connect to another AS process"
-#    send "yes\r"
-#
-#    expect {
-#      timeout { send_user "\nadd_user failed. timeout.\n"; exit 1}
-#      "*\$ "
-#    }
-#
-#    close
-#  args:
-#    executable: /usr/bin/expect
-#  register: res
-
-#- debug: var=res
-
-  #become: yes
-  #become_method: sudo
 
 #
 - name: remove tmp
-  file: state=absent path=/tmp/{{ wildfly_archivename }}
+  file: state=absent path="/tmp/{{ wildfly_archivename }}"
+- name: remove tmp
+  file: state=absent path=/tmp/mysql-connector-java-5.1.23-bin.jar.zip
 

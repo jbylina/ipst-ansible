@@ -63,11 +63,14 @@
     forceBuild: "{{ force_build|default('False') }}"
 
 
-## OS target project root path, contains source and binary files
+## OS target project root path, contains source, binary files and standalone tools
     project_home: "{{ user_project_home |default( ansible_env.HOME) }}"
 
-## OS target temporary path, relative to project_home
-    project_temporary: "{{ project_home + user_project_temporary |default('/tmp') }}"
+## OS target temporary path, relative to project home
+    project_temporary: "{{ project_home + '/'+ user_project_temporary |default('tmp') }}"
+
+## OS target script path, relative to project home
+    project_script: "{{ project_home + '/scripts' }}"
 
 ## prefix for locale log file
     log_file_prefix_default: "{{ playbook_dir }}/install"
@@ -77,31 +80,29 @@
     log_file_postfix_default: "{{ inventory_hostname+'.log' }}"
     log_file_postfix: "{{ user_log_file_postfix |default(log_file_postfix_default) }}"
 
+## source root path on target OS where sources will be cloned/updated, relative to project home
+    root_sources_path_default: "sources"
+    root_sources_path: "{{ project_home + '/' + user_source_root|default(root_sources_path_default) }}"
 
-
-## source root path on target OS where sources will be cloned/updated, relative to project_home
-    root_sources_path_default: "/ipst_ansible"
-    root_sources_path: "{{ project_home + user_source_root |default(root_sources_path_default) }}"
-
-## path on target OS where ipst-core sources will be cloned/updated, relative to root_sources_path
-    core_sources_path_default: "/ipst-core"
-    core_sources_path: "{{ root_sources_path + user_core_source |default(core_sources_path_default) }}"
+## path on target OS where powsybl-core sources will be cloned/updated, relative to root_sources_path
+    core_sources_path_default: "powsybl-core"
+    core_sources_path: "{{ root_sources_path + '/' + user_core_source|default(core_sources_path_default) }}"
 
 ## path on target OS where ipst-entsoe sources will be cloned/updated, relative to root_sources_path
-    entsoe_sources_path_default: "/ipst-entsoe"
-    entsoe_sources_path: "{{ root_sources_path + user_entsoe_source |default(entsoe_sources_path_default) }}"
+    entsoe_sources_path_default: "ipst-entsoe"
+    entsoe_sources_path: "{{ root_sources_path + '/' + user_entsoe_source|default(entsoe_sources_path_default) }}"
 
 ## path on target OS where ipst sources will be cloned/updated, relative to root_sources_path
-    ipst_sources_path_default: "/ipst"
-    ipst_sources_path: "{{ root_sources_path + user_ipst_source |default(ipst_sources_path_default) }}"
+    ipst_sources_path_default: "ipst"
+    ipst_sources_path: "{{ root_sources_path + '/' + user_ipst_source|default(ipst_sources_path_default) }}"
 
-## path on target OS where ipst thirdparty libraries will be installed, relative to root_sources_path
-    ipst_thirdparty_path_default: "/thirdparty"
-    ipst_thirdparty_path: "{{ root_sources_path + user_source_thirdparty |default(ipst_thirdparty_path_default) }}"
+## path on target OS where ipst thirdparty libraries will be installed, relative to project home
+    ipst_thirdparty_path_default: "thirdparty"
+    ipst_thirdparty_path: "{{ project_home + '/' + user_source_thirdparty|default(ipst_thirdparty_path_default) }}"
 
-## path on target OS where ipst will be installed, relative to project_home
-    ipst_install_path_default: "/itesla"
-    ipst_install_path: "{{ project_home + user_project_bin |default(ipst_install_path_default) }}"
+## path on target OS where ipst will be installed, relative to project home
+    ipst_install_path_default: "itools"
+    ipst_install_path: "{{ project_home + '/' + user_project_bin|default(ipst_install_path_default) }}"
 
 ## path on local OS, source of additional thirdparty libraries to be installed (as-is: untgz to ipst_install_path)
     misc_thirdparties_path: "./misc"
@@ -114,24 +115,51 @@
 
     entsoe_github_branchname: "{{ user_project_branch |default('master') }}"
 
-## ipst_thirdparty_packs
-    ipst_thirdparty_packs_path_default: "{{ ansible_env.HOME }}/ipst_ansible/thirdparty_packs"
+## ipst_thirdparty_packs, relative to project home
+    ipst_thirdparty_packs_path_default: "{{ project_home }}/thirdparty_packs"
     ipst_thirdparty_packs_path: "{{  thirdparty_packs|default(ipst_thirdparty_packs_path_default) }}"
+
+
 
 
 ##----------------------------------------------------------------------------------------------------------
 ## jdk install
 ##
 ## jdk archive url
-    jdk8_url_default: "http://download.oracle.com/otn-pub/java/jdk/8u112-b15/jdk-8u112-linux-x64.tar.gz"
+    jdk8_url_default: "http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135/jdk-8u144-linux-x64.tar.gz"
     jdk8_url: "{{ user_jdk8_url |default(jdk8_url_default) }}"
 
-## OS target jdk installation path
-    jdk8_home_default: "{{ ansible_env.HOME+'/jdk1.8.0_112' }}"
-    jdk8_home: "{{ user_jdk8_home |default( jdk8_home_default ) }}"
+## OS target jdk installation path, relative to project home
+    jdk8_home_default: "{{ 'java/jdk1.8.0_144' }}"
+    jdk8_home: "{{ project_home+'/'+ user_jdk8_home |default( jdk8_home_default ) }}"
 
 ## 1= log is activate, log is inactivate otherwise
     jdk8_log: "{{ user_jdk8_log |default(0) }}"
+
+
+##----------------------------------------------------------------------------------------------------------
+## mariadb parameters
+##
+
+##
+    mariadb_version_default: "10.2.9"
+    mariadb_version: "{{ user_mariadb_version |default( mariadb_version_default ) }}"
+
+##
+    mariadb_home_default: "{{ '/mariadb-' + mariadb_version }}"
+    mariadb_home: "{{ project_home+'/'+ user_mariadb_home|default(mariadb_home_default) }}"
+
+##
+    mariadb_archivename: "mariadb-{{ mariadb_version }}-linux-x86_64.tar.gz"
+
+##
+    mariadb_url: "http://ftp.igh.cnrs.fr/pub/mariadb/mariadb-10.2.9/bintar-linux-systemd-x86_64/mariadb-10.2.9-linux-systemd-x86_64.tar.gz"
+
+##
+    mariadb_conf: "{{ mariadb_home }}/my.cnf"
+
+##
+    mariadb_log_file: "{{ log_file_prefix+'_mariadb_'+log_file_postfix }}"
 
 
 ##----------------------------------------------------------------------------------------------------------
@@ -149,24 +177,28 @@
     ddb_archive_name: "{{ user_ddb_archive_name |default(ddb_archive_name_default) }}"
 
 ## local archive path of the data to integrate
-    ddb_locale_path_default: "~/"
+    ddb_locale_path_default: "{{ ansible_env.HOME }}/"
     ddb_locale_path: "{{ user_ddb_locale_path |default(ddb_locale_path_default) }}"
 
 ## OS target data path to integrate
-    ddb_remote_path_default: "{{ ansible_env.HOME+'/minimalist_DDB' }}"
-    ddb_remote_path: "{{ user_ddb_remote_path |default(ddb_remote_path_default) }}"
+    ddb_remote_path_default: "minimalist_DDB"
+    ddb_remote_path: "{{ project_home+'/'+ user_ddb_remote_path |default(ddb_remote_path_default) }}"
 
 ## local db log file
     ddb_log_file: "{{ log_file_prefix+'_ddb_'+log_file_postfix }}"
 
+
+##----------------------------------------------------------------------------------------------------------
 
 ## the project ear name
     ear_name_default: "iidm-ddb-ear.ear"
     ear_name: "{{ user_ear_name |default(ear_name_default) }}"
 
 ## ear remote path relative to the install path
-    ear_path_default: "/iidm-ddb/iidm-ddb-ear/target"
+    ear_path_default: "iidm-ddb/iidm-ddb-ear/target"
     ear_path: "{{ user_ear_path |default(ear_path_default) }}"
+
+
 
 ##----------------------------------------------------------------------------------------------------------
 ## hades parameters
@@ -176,15 +208,16 @@
 
 ## hades binary archive name
     hades_archive_name: "{{ user_hades_archive_name |default('hades2LF.tar.gz') }}"
+    #hades_archive_name: "{{ user_hades_archive_name |default('hades2LF.zip') }}"
 
 ## local hades binary archive path
-    hades_src: "{{ user_hades_src |default('~/tmp/hades') + '/'+hades_archive_name }}"
+    hades_src: "{{ user_hades_src |default('/$HOME/tmp/hades') + '/'+hades_archive_name }}"
 
-## target OS hades prefix path install
-    hades_dst: "{{ user_hades_dst |default( ansible_env.HOME ) }}"
+## target OS hades prefix path install relative to project home
+    hades_dst: "{{ project_home + '/'+user_hades_dst |default( '' ) }}"
 
 ## target OS hades path install
-    hades_create: "{{ hades_dst + user_hades_create |default('/hades2LF') }}"
+    hades_create: "{{ hades_dst + '/'+ user_hades_create |default('hades2LF') }}"
 
 ## test situation file name
     hades_situation_test: "{{ user_hades_situation_test |default('20160101_0030_FO5_FR0.xiidm.gz') }}"
@@ -193,15 +226,13 @@
     hades_situation_prefix: "{{ user_hades_situation_prefix |default('/DATA/IIDM/FO/2016/01/01') }}"
 
 ## local test situation path
-    hades_situations_src: "{{ user_hades_situations_prefix_src |default('~/tmp/situations/grovslb1/local') + hades_situation_prefix + '/'+ hades_situation_test }}"
-
-
+    hades_situations_src: "{{ user_hades_situations_prefix_src |default('/$HOME/tmp/situations/grovslb1/local') + hades_situation_prefix + '/'+ hades_situation_test }}"
 
 ## target OS test situation path
-    hades_situations_dst: "{{ user_hades_situations_home|default( ansible_env.HOME) +'/situations' + hades_situation_prefix }}"
+    hades_situations_dst: "{{ project_home + '/' + user_hades_situations_home|default( 'situations' + hades_situation_prefix) }}"
 
 ## result filename
-    hades_result_file: "{{ user_hades_result_file |default(ansible_env.HOME+'/security-analysis-result.txt') }}"
+    hades_result_file: "{{ project_home + '/' + user_hades_result_file |default('security-analysis-result.txt') }}"
 
 ## show discalmer, default is no
     hades_isDisclaimerPrompt: "{{ user_hades_isDisclaimerPrompt |default(False) }}"
@@ -224,6 +255,7 @@
       var="{{ item }}"
     when: "0==0"
     with_items:
+      - user_project_home
       - ipst_github_branchname
       - core_github_branchname
       - entsoe_github_branchname
@@ -245,6 +277,7 @@
       - "{{ project_home }}"
       - "{{ project_temporary }}"
       - "{{ hades_dst }}"
+      - "{{ project_script }}"
       #- "{{ hades_situations_dst }}"
 
 
@@ -256,11 +289,13 @@
   roles:
     - { role: ipst.common, when: "installPrerequisites == True", become: "yes" }
     - { role: ipst.openmpi, when: "installPrerequisites == True", become: "yes" }
-    - { role: ipst.jdk8, when: "installPrerequisites == True", become: "yes" }
-    - { role: ipst.maven, when: "installPrerequisites == True", become: "yes" }
-#    - { role: ipst.wildfly, when: "installPrerequisites == True", become: "yes" }
+    - { role: ipst.jdk8, when: "installPrerequisites == True" }
+    - { role: ipst.maven, when: "installPrerequisites == True" }
+    - { role: ipst.mariadb, when: "installPrerequisites == True"  }
+    - { role: ipst.wildfly, when: "installPrerequisites == True" }
     - { role: ipst.mcr, when: "installMCR == True", become: "yes" }
     - { role: ipst.ipst }
-    - { role: ipst.final , when: "ddb_process == True", become: "yes" }
-    - { role: ipst.hades , when: "hades_process == True", become: "yes" }
+    - { role: ipst.scripts }
+    - { role: ipst.final , when: "ddb_process == True" }
+    - { role: ipst.hades , when: "hades_process == True" }
     - { role: samples.nordic44, when: "installNordic44 is defined", tags: 'Nordic44'}

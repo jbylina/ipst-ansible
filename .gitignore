@@ -4,3 +4,8 @@
 *.log
 *.cfg
 ipst-hosts
+
+# IntelliJ
+/.idea
+*.iml
+/.project

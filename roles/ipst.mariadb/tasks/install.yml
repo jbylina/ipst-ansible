@@ -1,0 +1,107 @@
+---
+#
+# Copyright (c) 2016, RTE (http://www.rte-france.com)
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+
+#
+- name: mariadb download
+  command: "wget -O /tmp/{{ mariadb_archivename }} {{ mariadb_url }}"
+  register: mariadb_download
+
+#
+- name: mariadb create dest folder
+  file: state=directory
+        path="{{ mariadb_home }}"
+  register: mariadb_create_home
+
+#
+- name: mariadb extract
+  unarchive:
+    copy: no
+    src: "/tmp/{{ mariadb_archivename }}"
+    dest: "{{ mariadb_home }}"
+    extra_opts: ['--strip=1']
+  register: mariadb_extract
+
+#
+- name: remove tmp
+  file: state=absent path=/tmp/{{ mariadb_archivename }}
+
+#
+- name: mariadb default conf file create
+  shell: "touch {{ mariadb_conf }}"
+  register: dbmaria_conf
+
+#
+- name: mariadb install
+  command: "{{ mariadb_home }}/scripts/mysql_install_db --defaults-file={{ mariadb_home }}/my.cnf --basedir={{ mariadb_home }}  --ldata={{ mariadb_home }}/data"
+  register: mariadb_install
+
+# define env variables
+- name: Update bashrc file
+  blockinfile:
+    dest: "{{ ansible_env.HOME }}/.bashrc"
+    marker: "## {mark} mysql"
+    block: |
+      export MYSQL_HOME={{ mariadb_home }}
+      export PATH=$MYSQL_HOME/bin:$PATH
+    create: yes
+
+#
+- name: mariadb start
+  command: "{{ mariadb_home }}/bin/mysqld_safe --defaults-file={{ mariadb_home }}/my.cnf --no-watch --basedir={{ mariadb_home }} --datadir={{ mariadb_home }}/data --log-error=mysql.err"
+  register: mariadb_start
+
+- name: Wait a few ...
+  shell: "sleep 15"
+
+#
+- name: mariadb test
+  command: "{{ mariadb_home }}/bin/mysql --user root --execute 'select version()'"
+  register: mariadb_test
+
+#
+- name: Create init dbmaria script
+  template: src=init_dbmaria.j2
+            dest="{{ project_temporary }}/init_dbmaria.sql"
+
+#
+- name: Initialize dbmaria
+  shell: "{{ mariadb_home }}/bin/mysql --user root < {{ project_temporary }}/init_dbmaria.sql"
+  register: dbmaria_init
+
+#
+- name: mariadb shutdown
+  command: "{{ mariadb_home }}/bin/mysqladmin -uroot shutdown"
+  register: mariadb_shutdown
+
+## log to file some variables
+- name: remove previous log file
+  local_action: file
+    state=absent
+    path="{{ mariadb_log_file }}"
+
+##
+- name: log file
+  local_action: lineinfile
+      dest="{{ mariadb_log_file }}"
+      line="{{ {'_name':item._name|default('n/a') ,'cmd':item.cmd|default('n/a') ,'delta':item.delta|default('n/a') ,'end':item.end|default('n/a') ,'rc':item.rc|default('n/a') ,'state':item.state|default('n/a') ,'start':item.start|default('n/a') ,'stdout_lines':item.stdout_lines|default('n/a'), 'stderr':item.stderr_lines|default(omit)} | to_nice_json }}"
+      state=present
+      insertafter=EOF
+      create=True
+  when: item is defined
+  no_log: True
+  with_items:
+    - "{{ mariadb_download|combine({'_name':'mariadb_download'}) }}"
+    - "{{ mariadb_create_home|combine({'_name':'mariadb_create_home'}) }}"
+    - "{{ mariadb_extract|combine({'_name':'mariadb_extract'}) }}"
+    - "{{ dbmaria_conf|combine({'_name':'dbmaria_conf'}) }}"
+    - "{{ mariadb_install|combine({'_name':'mariadb_install'}) }}"
+    - "{{ mariadb_start|combine({'_name':'mariadb_start'}) }}"
+    - "{{ mariadb_test|combine({'_name':'mariadb_test'}) }}"
+    - "{{ mariadb_shutdown|combine({'_name':'mariadb_shutdown'}) }}"
+
