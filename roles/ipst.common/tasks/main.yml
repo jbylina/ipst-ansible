@@ -26,4 +26,5 @@
 #      - openmpi-devel
     - zlib-devel
     - wget
+    - icu
 #    - expect
