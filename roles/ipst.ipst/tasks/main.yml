@@ -6,7 +6,9 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 # 
-
+# to load mpi path  
+  - name: source bashrc file
+    shell: source {{ ansible_env.HOME }}/.bashrc
 # clone/update powsybl-core from github
   - include: install_core.yml
 

@@ -60,7 +60,7 @@
 
 
 ## if set to True, always triggers the ipst platfrom build, even if there are no updates from github
-    forceBuild: "{{ force_build|default('False') }}"
+    forceBuild: "{{ force_build|default('True') }}"
 
 
 ## OS target project root path, contains source, binary files and standalone tools
@@ -126,7 +126,7 @@
 ## jdk install
 ##
 ## jdk archive url
-    jdk8_url_default: "http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135/jdk-8u144-linux-x64.tar.gz"
+    jdk8_url_default: "http://download.oracle.com/otn-pub/java/jdk/8u151-b12/e758a0de34e24606bca991d704f6dcbf/jdk-8u151-linux-x64.tar.gz"                       
     jdk8_url: "{{ user_jdk8_url |default(jdk8_url_default) }}"
 
 ## OS target jdk installation path, relative to project home
@@ -204,7 +204,7 @@
 ## hades parameters
 
 ## if set to True, do test Hades part
-    hades_process: "{{ user_hades_process|default('False') }}"
+    hades_process: "{{ user_hades_process|default('True') }}"
 
 ## hades binary archive name
     hades_archive_name: "{{ user_hades_archive_name |default('hades2LF.tar.gz') }}"
