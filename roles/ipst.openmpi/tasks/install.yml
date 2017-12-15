@@ -7,9 +7,9 @@
 #
 
 #(if old installation was failed)
-- name: Clean up befor (file)
+- name: Clean up before (file)
   file: state=absent path=/tmp/openmpi-{{ openmpi_version }}.tar.bz2
-- name: Clean up befor (directory)
+- name: Clean up before (directory)
   file: state=absent path=/tmp/openmpi-{{ openmpi_version }}
 
 # install tasks file for ipst.openmpi
