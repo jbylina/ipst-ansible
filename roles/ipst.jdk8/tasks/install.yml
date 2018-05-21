@@ -5,12 +5,17 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-- name: Remove archive
-  file: state=absent path={{ jdk8_tmp }}
+#- name: Remove archive
+#  file: state=absent path={{ jdk8_tmp }}
+
+- debug: var="jdk8_tmp"
+- stat: path={{ jdk8_tmp }}
+  register: jdktargz
 
 - name: Download jdk8
   command: "wget -O {{ jdk8_tmp }} --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' {{ jdk8_url }} creates={{ jdk8_tmp }}"
   register: download
+  when: jdktargz.stat.exists == False
 
 - debug: var="download"
 #- name: Check status
