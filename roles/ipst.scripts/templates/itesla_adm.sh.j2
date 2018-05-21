@@ -70,10 +70,6 @@ f_updateSources() {
     cd ${source_home}/powsybl-core
     git pull
     mvn install
-    # update ipst-entsoe module
-    cd ${source_home}/ipst-entsoe
-    git pull
-    mvn install
     # update ipst module
     cd ${source_home}/ipst
     git pull

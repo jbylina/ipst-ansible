@@ -88,9 +88,9 @@
     core_sources_path_default: "powsybl-core"
     core_sources_path: "{{ root_sources_path + '/' + user_core_source|default(core_sources_path_default) }}"
 
-## path on target OS where ipst-entsoe sources will be cloned/updated, relative to root_sources_path
-    entsoe_sources_path_default: "ipst-entsoe"
-    entsoe_sources_path: "{{ root_sources_path + '/' + user_entsoe_source|default(entsoe_sources_path_default) }}"
+## path on target OS where cgmes sources will be cloned/updated, relative to root_sources_path
+    cgmes_sources_path_default: "CGMES"
+    cgmes_sources_path: "{{ root_sources_path + '/' + user_cgmes_source|default(cgmes_sources_path_default) }}"
 
 ## path on target OS where ipst sources will be cloned/updated, relative to root_sources_path
     ipst_sources_path_default: "ipst"
@@ -109,11 +109,11 @@
 
 ## ipst github project details
 ### TODO branchname must be set to master, eventually
-    ipst_github_branchname: "{{ user_project_branch |default('master') }}"
+    ipst_github_branchname: "{{ ipst_project_branch |default('master') }}"
 
-    core_github_branchname: "{{ user_project_branch |default('master') }}"
+    core_github_branchname: "{{ powsybl_core_project_branch |default('master') }}"
 
-    entsoe_github_branchname: "{{ user_project_branch |default('master') }}"
+    cgmes_github_branchname: "{{ powsybl_cgmes_project_branch |default('master') }}"
 
 ## ipst_thirdparty_packs, relative to project home
     ipst_thirdparty_packs_path_default: "{{ project_home }}/thirdparty_packs"
@@ -153,7 +153,7 @@
     mariadb_archivename: "mariadb-{{ mariadb_version }}-linux-x86_64.tar.gz"
 
 ##
-    mariadb_url: "http://ftp.igh.cnrs.fr/pub/mariadb/mariadb-10.2.9/bintar-linux-systemd-x86_64/mariadb-10.2.9-linux-systemd-x86_64.tar.gz"
+    mariadb_url: "https://downloads.mariadb.org/f/mariadb-10.2.9/bintar-linux-systemd-x86_64/mariadb-10.2.9-linux-systemd-x86_64.tar.gz/from/http%3A//ftp.hosteurope.de/mirror/archive.mariadb.org/?serve"
 
 ##
     mariadb_conf: "{{ mariadb_home }}/my.cnf"
@@ -258,15 +258,12 @@
       - user_project_home
       - ipst_github_branchname
       - core_github_branchname
-      - entsoe_github_branchname
       - root_sources_path
       - ipst_sources_path
       - ipst_install_path
       - ipst_thirdparty_path
       - core_sources_path
       - core_github_branchname
-      - entsoe_sources_path
-      - entsoe_github_branchname
 
 
     #

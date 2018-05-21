@@ -39,16 +39,14 @@ builds the 'platform distribution' and installs it, in place.
 ### iPST
 
 The default target directories for iPST are (these are all configurable, see below in the usage section): 
- - $HOME/ipst_ansible/ipst  (iPST sources) 
- - $HOME/ipst_ansible/powsybl-core  (powsybl-core sources)
- - $HOME/ipst_ansible/ipst-entsoe (iPST-entsoe sources)
- - $HOME/ipst_ansible/thirdparty  (thirdparty libraries: boost, hdf5, etc.)
- - $HOME/itesla (iPST binaries)
+ - $HOME/sources/ipst  (iPST sources) 
+ - $HOME/sources/powsybl-core  (powsybl-core sources)
+ - $HOME/thirdparty  (thirdparty libraries: boost, hdf5, etc.)
+ - $HOME/ipst (iPST binaries)
 
-ipst, powsybl-core, ipst-entsoe provide a local logging file
+ipst, powsybl-core, provide a local logging file
  - << playbook_dir >>/install_ipst_<< target_machine >>.log
  - << playbook_dir >>/install_core_<< target_machine >>.log
- - << playbook_dir >>/install_entsoe_<< target_machine >>.log
 
 SSH is used to communicate with the hosts: apparently connections do not work properly if a connection is not done once to all the servers; to fix it, run once
    ssh-keyscan server_IP or server_NAME >> ~/.ssh/known_hosts, for each target server
@@ -64,12 +62,9 @@ security-analysis, ...  his usage allow check full itesla installation
 
 the default target directories are
  - $HOME/hades2LF  (Hades binary contains)
- - $HOME/situations/DATA/IIDM/FO/2016/01/01/20160101_0030_FO5_FR0.xiidm.gz (situations datas)
- - $HOME/security-analysis-result.txt' (processing result file)
 
 need additional local files
  - $HOME/tmp/hades/hades2LF.tar.gz (binary file)
- - $HOME/tmp/situations/grovslb1/local/DATA/IIDM/FO/2016/01/01/20160101_0030_FO5_FR0.xiidm.gz (situations)
 
 provide local logging file
  - << playbook_dir >>/install_hades_<< target_machine >>.log
@@ -98,9 +93,10 @@ provide local logging file
 
 1. Copy the example inventory file ansible-scripts/ipst-hosts.example to ansible-scripts/ipst-hosts and edit the latter one, adding IPs / specific connection parameters of the target servers to the [ipst_hosts] section.
 
-2. (Optional) To configure the installation procedure to use proxies (downloading OS packages, runtimes and IPST sources), 
-  or to customize the installation parameters (e.g. setting iPST target installation directories, enable/disable requirements and MCR packages installations), 
-  copy the ipst_hosts example group variables inventory file ansible-scripts/group_vars_ipst_hosts.example to ansible-scripts/group_vars/ipst_hosts and edit it; example:
+2. Copy the file ansible-scripts/group_vars_ipst_hosts.example to ansible-scripts/group_vars/ipst_hosts;
+   Edit it to configure the installation procedure to use proxies (downloading OS packages, runtimes and IPST sources), 
+     or to customize the installation parameters (e.g. setting iPST target installation directories, enable/disable requirements and MCR packages installations), 
+   example:
 ```
 # file: group_vars/ipst_hosts
 ---
@@ -144,18 +140,20 @@ user_log_file_prefix: "{{ playbook_dir }}/install"
 ##   (default value is {{ inventory_hostname+'.log' }})
 user_log_file_postfix: "{{ inventory_hostname+'.log' }}"
 
-
 ## project_bin - OS target binary directory relative to the project home
-##    (default value is itesla)
-user_project_bin: "itesla"
+##    (default value is ipst)
+user_project_bin: "ipst"
 
 ## project_branch - github branch project
 ##    (default value is master)
-user_project_branch: "master"
+ipst_project_branch: "master"
 
 ## source_root - OS target source project directory relative to the project home
-##    (default value is ipst_ansible)
+##    (default value is sources)
 user_source_root: "sources"
+
+## user_ipst_enabled if True, build ipst project
+user_ipst_enabled: True
 
 ## ipst_source - OS target source ipst module directory relative to the source home
 ##    (default value is ipst)
@@ -165,7 +163,13 @@ user_ipst_source: "ipst"
 ##    (default value is https://github.com/itesla/ipst.git)
 user_ipst_github: "https://github.com/itesla/ipst.git"
 
+## project_branch - ipst github branch project
+##    (default value is master)
+ipst_project_branch: "master"
 
+## project_branch - powsybl-core github branch project
+##    (default value is master)
+powsybl_core_project_branch: "master"
 
 ## core_source - OS target source core module directory relative to the source home
 ##    (default value is powsybl-core )
@@ -173,36 +177,38 @@ user_core_source: "powsybl-core"
 
 ## core_github - core github repository
 ##    (default value is https://github.com/itesla/powsybl-core.git)
-user_core_github: https://github.com/itesla/powsybl-core.git
+user_core_github: https://github.com/powsybl/powsybl-core.git
 
+## user_cgmes_enabled if True, build cgmes project
+user_cgmes_enabled: False 
 
+## cgmes_source - OS target source cgmes module directory relative to the source home
+###    (default value is cgmes)
+user_cgmes_source: "CGMES"
 
-## entsoe_source - OS target source entsoe module directory relative to the source home
-##    (default value is ipst-entsoe)
-user_entsoe_source: "ipst-entsoe"
+### cgmes_github - cgmes github repository
+###    (default value is https://github.com/powsybl/CGMES.git)
+user_cgmes_github: https://github.com/powsybl/CGMES.git
 
-## entsoe_github - entsoe github repository
-##    (default value is https://github.com/iTesla/ipst-entsoe.git)
-user_entsoe_github: https://github.com/iTesla/ipst-entsoe.git
-
+## project_branch - powsybl-cgmes github branch project
+##    (default value is master)
+powsybl_cgmes_project_branch: "master"
 
 ## source_thirdparty - OS target source thirdparty module directory relative to the project home
 ##    (default value is thirdparty)
 user_source_thirdparty: "thirdparty"
 
 
-
-
 ##--------------------------------------------------------------------------
 ##-- define java user parameters
 
 ##- jdk8_url - define jdk url
-user_jdk8_url: "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.tar.gz"
+user_jdk8_url: "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u161-linux-x64.tar.gz"
 
 
 ##- jdk8_home - OS target jdk home, relative to the project home
 ##    (default value is java/jdk1.8.0_144)
-user_jdk8_home: "java/jdk1.8.0_144"
+user_jdk8_home: "java/jdk1.8.0_161"
 
 
 ##- jdk8_log - 0 no screen debug
@@ -217,7 +223,7 @@ user_jdk8_log: 1
 
 ## maven_version - maven install version
 ##    (default value is 3.5.0)
-user_maven_version: "3.5.0"
+user_maven_version: "3.5.3"
 
 ## maven_dest_path - OS target maven parent install path , relative to the project home
 ##    (default value is maven)
@@ -225,17 +231,15 @@ user_maven_dest_path: "maven"
 
 ## maven_mirror - maven mirror prefix url
 ##    (default value is http://apache.mirrors.ovh.net/ftp.apache.org/dist/maven/maven-3/3.5.0/binaries)
-user_maven_mirror: "http://apache.mirrors.ovh.net/ftp.apache.org/dist/maven/maven-3/3.5.0/binaries"
+user_maven_mirror: "http://apache.mirrors.ovh.net/ftp.apache.org/dist/maven/maven-3/3.5.3/binaries"
 
 ## maven_proxies - maven proxies
 ##    (default value is none)
 #user_maven_proxies:
 #    - {host: "proxyhttps.mydomain.com", port: "443", username: "username", password: "password", protocol: "https"}
 
-
-## maven repository location, default value is undefined
+## maven repository location, default value is $HOME/.m2/repository
 #user_maven_repository: "$HOME/.m2/repository"
-
 
 ##--------------------------------------------------------------------------
 ##-- define wildfly user options
@@ -244,6 +248,10 @@ user_maven_mirror: "http://apache.mirrors.ovh.net/ftp.apache.org/dist/maven/mave
 ## wildfly_url - wildfly url binary download
 ##    (default value is http://download.jboss.org/wildfly/8.1.0.Final/wildfly-8.1.0.Final.zip)
 user_wildfly_url: http://download.jboss.org/wildfly/8.1.0.Final/wildfly-8.1.0.Final.zip
+
+## wildfly_dest_path - OS target wildfly install path
+##    (default value is ansible_env.HOME)
+user_wildfly_dest_path: "{{ ansible_env.HOME }}/wildfly"
 
 
 
@@ -284,7 +292,8 @@ user_ddb_eurostag_version: "5.1.1"
 ##- security-analysis Part
 
 ## hades_process - process_hades - (install and process hades test, default is False)
-user_hades_process: False
+user_hades_process: True
+user_hades_tests: False
 
 ## hades_archive_name - hades binary archive name
 ##    (default value is hades2LF.tar.gz)
@@ -292,7 +301,7 @@ user_hades_archive_name: hades2LF.tar.gz
 
 ## hades_src - local hades binary path archive
 ##    (default value is ~/tmp/hades)
-user_hades_src: "~/tmp/hades"
+user_hades_src: "~/Downloads"
 
 ## hades_dst - OS target hades binary prefix destination path, relative to the project home
 ##    (default value is empty)

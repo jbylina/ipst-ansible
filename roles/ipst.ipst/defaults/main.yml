@@ -24,12 +24,13 @@ core_install_cmd: "./install.sh --with-thirdparty --prefix {{ ipst_install_path 
 core_log_file: "{{ log_file_prefix+'_core_'+log_file_postfix }}"
 
 
-##-- ipst-entsoe
-## entsoe github repo
-# entsoe_github_uri: "{{ user_entsoe_github |default('https://github.com/itesla/ipst-entsoe.git')  }}"
 
-## ipst-entsoe installation script (not expected to be edited)
-# entsoe_install_cmd: "./install.sh  --prefix {{ ipst_install_path }}"
+##-- cgmes
+## cgmes github repo
+cgmes_github_uri: "{{ user_cgmes_github |default('https://github.com/powsybl/CGMES.git')  }}"
 
-## entsoe log file install
-# entsoe_log_file: "{{ log_file_prefix+'_entsoe_'+log_file_postfix }}"
+## cgmes installation script (not expected to be edited)
+cgmes_install_cmd: "./install.sh  --prefix {{ ipst_install_path }} --skip-tests"
+
+## cgmes log file install
+cgmes_log_file: "{{ log_file_prefix+'_cgmes_'+log_file_postfix }}"

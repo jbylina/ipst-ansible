@@ -1,0 +1,72 @@
+---
+
+#
+  - debug:
+      msg: " log file: {{ cgmes_log_file }}"
+
+# clone/update cgmes  project from github
+# Note: update does not work when there are local modifications (e.g. when some of the project's file are edited on-site)
+  - name: cgmes retrieve sources from github
+    git: repo="{{ cgmes_github_uri }}"
+      dest="{{ cgmes_sources_path }}"
+      version="{{ cgmes_github_branchname }}"
+    register: gitop
+    when: ipst_github_enabled == True
+
+  #
+  - name: cgmes check if sources directory exists ...
+    stat: path="{{ cgmes_sources_path }}"
+    register: sourcesPathStat
+
+  #
+  - name: cgmes .... stop if sources directory does not exist
+    fail: msg="sources path {{ cgmes_sources_path }} does not exist; either provide required sources on target node or set ipst_github_enable variable, to retrieve the project from GitHub."
+    when: sourcesPathStat.stat.exists == False
+
+  # remove a previously generated install config file (to not interfere with the ansible configurations)
+  - name: cgmes remove current install configuration
+    file: path={{ cgmes_sources_path }}/install.cfg state=absent
+    when: (gitop.changed or forceBuild)
+
+  # install cgmes
+  - name: cgmes build and install ipst
+    # Using shell because 'command' does not handle well redirections, pipes, etc.  Using -l to inherit the environment variables, correctly
+    shell: /bin/bash -lc "{{ cgmes_install_cmd }}"
+    args:
+      chdir: "{{cgmes_sources_path}}"
+    when: (gitop.changed or forceBuild)
+    register: installCgmesScript
+    #in case, ignore errors (to proceed to next steps and possibly log the errors)
+    ignore_errors: True
+
+  # log to file some variables
+  - name: remove previous log file
+    local_action: file state=absent path="{{ cgmes_log_file }}"
+    when: installCgmesScript is defined
+      and installCgmesScript.skipped is not defined
+  - name: log file
+    local_action: lineinfile
+      dest="{{ cgmes_log_file }}"
+      line="{{ {'_name':item._name|default('n/a') ,'cmd':item.cmd|default('n/a') ,'delta':item.delta|default('n/a') ,'end':item.end|default('n/a') ,'rc':item.rc|default('n/a') ,'state':item.state|default('n/a') ,'start':item.start|default('n/a') ,'stdout_lines':item.stdout_lines|default('n/a')} | to_nice_json }}"
+      state=present
+      insertafter=EOF
+      create=True
+    when: item is defined
+      and installCgmesScript is defined
+      and installCgmesScript.skipped is not defined
+    no_log: True
+    with_items:
+      - "{{ installCgmesScript |combine({'_name':'installCgmesScript'}) }}"
+
+
+  - name: cgmes stop execution in case of failure
+    fail: msg="The execution has failed because of errors."
+    when: installCgmesScript is defined
+      and installCgmesScript.skipped is not defined
+      and (installCgmesScript.rc > 1000 or '[ERROR] ' in installCgmesScript.stdout )
+
+  - name: cgmes make sure that the target directory exists
+    file: dest="{{ ipst_install_path }}" state=directory mode=0755
+    when: statThirdpartyFolder.stat.isdir is defined
+      and statThirdpartyFolder.stat.isdir
+

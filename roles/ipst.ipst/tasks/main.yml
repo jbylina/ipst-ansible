@@ -12,11 +12,13 @@
 # clone/update powsybl-core from github
   - include: install_core.yml
 
-# clone/update ipst-entsoe from github
-#   - include: install_entsoe.yml
-
+# clone/update ipst-cgmes from github
+  - include: install_cgmes.yml
+    when: user_cgmes_enabled == True
+   
 # clone/update ipst from github
   - include: install_ipst.yml
+    when: user_ipst_enabled == True
   
   - name: Update bashrc file
     blockinfile:
