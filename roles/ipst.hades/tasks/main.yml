@@ -41,9 +41,9 @@
       when: hades_install|success
       #no_log: True
       with_items:
-        - { src: "adn-export-0.1-SNAPSHOT.jar"}
-        - { src: "hades2-integration-0.1-SNAPSHOT.jar"}
-        - { src: "iidm-cvg-extensions-0.1-SNAPSHOT.jar"}
+        - { src: "powsybl-adn-export-1.0.jar"}
+        - { src: "powsybl-hades2-integration-1.0.jar"}
+        - { src: "powsybl-iidm-cvg-extensions-1.0.jar"}
 
     - name: Hades configure
       when: hades_install|success
@@ -54,27 +54,28 @@
     #
     - name: Create data directory
       file: state=directory path={{ hades_situations_dst }}
+      when: user_hades_tests
     - name: Extract data
       copy: src={{ hades_situations_src }}  dest={{ hades_situations_dst }}
-
+      when: user_hades_tests
     - name: Create security_analysis test script
       template: src=test_security_analysis.sh.j2
                 dest="{{ project_script }}/test_security_analysis.sh"
                 mode=a+x
-
+      when: user_hades_tests
     - name: security_analysis test
       shell: "{{ project_script }}/test_security_analysis.sh"
       register: security
-
+      when: user_hades_tests
     - set_fact:
         security:
           stdout_lines: "{{security.stdout_lines|map('regex_replace', '\\\u001b\\[0m','')|map('regex_replace', '\\\u001b\\[33m','')|map('regex_replace', '\\t','    ') | list}}"
-
+      when: user_hades_tests
 
   rescue:
     - set_fact:
         has_error: true
-
+      when: user_hades_tests
   always:
 
     - name: Remove previous log file
