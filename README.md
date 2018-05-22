@@ -187,8 +187,8 @@ user_cgmes_enabled: False
 user_cgmes_source: "CGMES"
 
 ### cgmes_github - cgmes github repository
-###    (default value is https://github.com/powsybl/CGMES.git)
-user_cgmes_github: https://github.com/powsybl/CGMES.git
+###    (default value is https://github.com/itesla/CGMES.git)
+user_cgmes_github: https://github.com/itesla/CGMES.git
 
 ## project_branch - powsybl-cgmes github branch project
 ##    (default value is master)
