@@ -69,7 +69,7 @@ ipst_project_branch: "master"
 
 ## project_branch - powsybl-core github branch project
 ##    (default value is master)
-powsybl_core_project_branch: "cgmes_validation"
+powsybl_core_project_branch: "master"
 
 ## core_source - OS target source core module directory relative to the source home
 ##    (default value is powsybl-core )
