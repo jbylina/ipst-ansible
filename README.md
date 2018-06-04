@@ -369,6 +369,6 @@ Notes:
   More details on ansible-playbook command and parameters, here:  http://docs.ansible.com/ansible/playbooks_variables.html 
   Privileges escalation related configurations are explained here: http://docs.ansible.com/ansible/become.html
 
-5. Currently, CGMES project installation is by default disabled: CGMES requires a specific powsybl-core branch (cgmes_validation) that is not yet compatible with ipst.
-To build CGMES (without iPST modules) set user_cgmes_enabled: True;  user_ipst_enabled: False; powsybl_core_project_branch: "cgmes_validation" in the 
+5. Currently, CGMES project installation is by default disabled: CGMES requires a development powsybl-core branch (>= 1.2.0-SNAPSHOT) that is not yet compatible with ipst.
+To build CGMES (without iPST modules) set user_cgmes_enabled: True;  user_ipst_enabled: False; powsybl_core_project_branch: "master" in the 
 in your configuration file in the group_vars directory. 
