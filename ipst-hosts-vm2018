@@ -1,0 +1,6 @@
+[ipst_hosts_vm2018]
+####
+####  ref. http://docs.ansible.com/ansible/intro_inventory.html  (List of Behavioral Inventory Parameters)
+####
+
+127.0.0.1 ansible_user=vagrant ansible_ssh_pass=vagrant ansible_become_method=sudo
