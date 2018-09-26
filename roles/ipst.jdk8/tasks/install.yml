@@ -39,9 +39,10 @@
 - debug: var="jdk8installed"
   when: "{{ jdk8_log == '1' }}"
 
-# manage via alternative
-#- name: Make Java available for system
-#  command: 'alternatives --install "/usr/bin/java" "java" "{{ jdk8_prefix }}/bin/java" 2000'
+- name: Make Java available for system
+  command: 'alternatives --install "/usr/bin/java" "java" "{{ jdk8_home }}/bin/java" 2000'
+  become: true
+  become_user: root
 
 - name: Remove archive
   file: state=absent path={{ jdk8_tmp }}
