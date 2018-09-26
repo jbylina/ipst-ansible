@@ -8,3 +8,4 @@ ipst-hosts
 /.idea
 *.iml
 /.project
+.vagrant/

@@ -80,7 +80,7 @@ user_core_source: "powsybl-core"
 user_core_github: https://github.com/powsybl/powsybl-core.git
 
 ## user_cgmes_enabled if True, build cgmes project
-user_cgmes_enabled: False 
+user_cgmes_enabled: False
 
 ## cgmes_source - OS target source cgmes module directory relative to the source home
 ##    (default value is cgmes)
@@ -103,12 +103,12 @@ user_source_thirdparty: "thirdparty"
 ##-- define java user parameters
 
 ##- jdk8_url - define jdk url
-user_jdk8_url: "http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.tar.gz"
+user_jdk8_url: "http://download.oracle.com/otn-pub/java/jdk/8u181-b13/96a7b8442fe848ef90c96a2fad6ed6d1/jdk-8u181-linux-x64.tar.gz"
 
 
 ##- jdk8_home - OS target jdk home, relative to the project home
 ##    (default value is java/jdk1.8.0_144)
-user_jdk8_home: "java/jdk-8u171"
+user_jdk8_home: "java/jdk-8u181"
 
 
 ##- jdk8_log - 0 no screen debug
@@ -123,7 +123,7 @@ user_jdk8_log: 1
 
 ## maven_version - maven install version
 ##    (default value is 3.5.0)
-user_maven_version: "3.5.3"
+user_maven_version: "3.5.4"
 
 ## maven_dest_path - OS target maven parent install path , relative to the project home
 ##    (default value is maven)
@@ -131,7 +131,7 @@ user_maven_dest_path: "maven"
 
 ## maven_mirror - maven mirror prefix url
 ##    (default value is http://apache.mirrors.ovh.net/ftp.apache.org/dist/maven/maven-3/3.5.0/binaries)
-user_maven_mirror: "http://apache.mirrors.ovh.net/ftp.apache.org/dist/maven/maven-3/3.5.3/binaries"
+user_maven_mirror: "http://apache.mirrors.ovh.net/ftp.apache.org/dist/maven/maven-3/3.5.4/binaries"
 
 ## maven_proxies - maven proxies
 ##    (default value is none)
